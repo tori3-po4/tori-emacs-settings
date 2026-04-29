@@ -371,7 +371,6 @@ GUI 以外、または何も見つからなければ nil。"
  (eat-kill-buffer-on-exit t)
  (eat-enable-mouse t)
  (eat-term-name "xterm-256color"))
- (eat-shell "/bin/zsh -f"))
 
 (use-package vterm
   :commands vterm
