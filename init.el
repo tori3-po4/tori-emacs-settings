@@ -359,6 +359,14 @@ GUI 以外、または何も見つからなければ nil。"
   (corfu-quit-no-match 'separator)
   (tab-always-indent 'complete))
 
+;;--------------------------------------
+;;emacs内でリッチなターミナルを使えるようにする
+;;--------------------------------------
+
+(use-package eat
+  :commands (eat eat-other-window)
+  :custom
+  (eat-kill-buffer-on-exit t))
 
 ;; custom.el を分離
 (setq custom-file (locate-user-emacs-file "custom.el"))
