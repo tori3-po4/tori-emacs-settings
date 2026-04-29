@@ -6,7 +6,7 @@
 (setq ring-bell-function 'ignore)
 ;;ディスプレイサイズの変更
 (when (display-graphic-p)
-  (add-to-list 'default-frame-alist '(width . 110))
+  (add-to-list 'default-frame-alist '(width . 80))
   (add-to-list 'default-frame-alist '(height . 42)))
 
 ;;ツールバースクロールバーの設定
