@@ -1,0 +1,26 @@
+# パッケージ (package-install で再構築)
+elpa/
+eln-cache/
+*.elc
+
+# 自動生成・状態ファイル
+auto-save-list/
+recentf
+url/
+tutorial/
+bookmarks
+places
+network-security.data
+transient/
+projectile-bookmarks.eld
+
+# バックアップ・ロック
+*~
+\#*\#
+.\#*
+
+# customize 経由の自動書き込み (マシン依存)
+custom.el
+
+# OS
+.DS_Store
