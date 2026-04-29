@@ -369,6 +369,13 @@ GUI 以外、または何も見つからなければ nil。"
   :custom
   (eat-kill-buffer-on-exit t))
 
+(use-package vterm
+  :commands vterm
+  :custom
+  (vterm-max-scrollback 10000)
+  (vterm-buffer-name-string "vterm: %s")
+  (vterm-shell (or (getenv "SHELL") "/bin/zsh")))
+
 ;; custom.el を分離
 (setq custom-file (locate-user-emacs-file "custom.el"))
 (when (file-exists-p custom-file)
