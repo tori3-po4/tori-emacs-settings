@@ -4,9 +4,16 @@
 (global-display-line-numbers-mode 1)
 (column-number-mode 1)
 (setq ring-bell-function 'ignore)
+
+;; ミニバッファの高さを制限(画面の25%まで)
+(setq max-mini-window-height 0.25)
+
+;; もしくは伸縮自体を止める(長文は切れるので注意)
+;; (setq resize-mini-windows nil)
+
 ;;ディスプレイサイズの変更
 (when (display-graphic-p)
-  (add-to-list 'default-frame-alist '(width . 80))
+  (add-to-list 'default-frame-alist '(width . 110))
   (add-to-list 'default-frame-alist '(height . 42)))
 
 ;;ツールバースクロールバーの設定
