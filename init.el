@@ -365,11 +365,12 @@ GUI 以外、または何も見つからなければ nil。"
 ;;--------------------------------------
 
 (use-package eat
-  :commands (eat eat-other-window)
-  :custom
-  (eat-kill-buffer-on-exit t)
-   (eat-enable-mouse t)
-   (eat-shell "/bin/zsh -f"))
+ :commands (eat eat-other-window)
+ :hook (eat-mode . eat-char-mode) 
+ :custom
+ (eat-kill-buffer-on-exit t)
+ (eat-enable-mouse t)
+ (eat-shell "/bin/zsh -f"))
 
 (use-package vterm
   :commands vterm
