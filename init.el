@@ -4,7 +4,8 @@
 (global-display-line-numbers-mode 1)
 (column-number-mode 1)
 (setq ring-bell-function 'ignore)
-
+(setq inhibit-startup-screen t)
+(setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 ;; ミニバッファの高さを制限(画面の25%まで)
 (setq max-mini-window-height 0.25)
 
@@ -184,8 +185,8 @@ GUI 以外、または何も見つからなければ nil。"
   (doom-modeline-bar-width 6)
   (doom-modeline-height 32)
   :custom-face
-  (mode-line          ((t (:box (:line-width 6 :color "#7aa2f7")))))
-  (mode-line-inactive ((t (:box (:line-width 6 :color "#414868")))))
+  (mode-line          ((t (:box (:line-width 6 :color "#b4f9f8")))))
+  (mode-line-inactive ((t (:box (:line-width 6 :color "#2ac3de")))))
   (doom-modeline-evil-normal-state   ((t (:foreground "#9ece6a" :weight bold))))
   (doom-modeline-evil-insert-state   ((t (:foreground "#7dcfff" :weight bold))))
   (doom-modeline-evil-visual-state   ((t (:foreground "#bb9af7" :weight bold))))
@@ -293,6 +294,16 @@ GUI 以外、または何も見つからなければ nil。"
       :scroll-bar-width 8
       :fringe-width 8)))
 
+;; ウィンドウ分割線を明示
+(setq window-divider-default-places t)
+(setq window-divider-default-right-width 2)
+(setq window-divider-default-bottom-width 2)
+(window-divider-mode 1)
+
+(custom-set-faces
+ '(window-divider             ((t (:foreground "#bb9af7"))))
+ '(window-divider-first-pixel ((t (:foreground "#bb9af7"))))
+ '(window-divider-last-pixel  ((t (:foreground "#bb9af7")))))
 
 ;; ----------------------------
 ;; 補完・ヘルプ系
