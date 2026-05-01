@@ -195,11 +195,19 @@ GUI 以外、または何も見つからなければ nil。"
   :hook
   (after-init . doom-modeline-mode))
 
-(with-eval-after-load 'doom-modeline
+;; モードラインの :box は doom-modeline / spacious-padding 両方のロード後に強制適用
+;; (両者がそれぞれ :box を上書きするため、両方のフックで設定する必要がある)
+(defun my/apply-modeline-box ()
+  "モードラインに :box 設定を強制適用する。"
   (set-face-attribute 'mode-line nil
                       :box '(:line-width 6 :color "#2ac3de"))
   (set-face-attribute 'mode-line-inactive nil
                       :box '(:line-width 6 :color "#1f5160")))
+
+(with-eval-after-load 'doom-modeline (my/apply-modeline-box))
+(with-eval-after-load 'spacious-padding (my/apply-modeline-box))
+;; さらに保険として after-init-hook の最後にも適用
+(add-hook 'after-init-hook #'my/apply-modeline-box 100)
 
 ;; モードラインのセグメント間スペースを広げる
 (with-eval-after-load 'doom-modeline
@@ -300,8 +308,8 @@ GUI 以外、または何も見つからなければ nil。"
 
 ;; ウィンドウ分割線を明示
 (setq window-divider-default-places t)
-(setq window-divider-default-right-width 2)
-(setq window-divider-default-bottom-width 2)
+(setq window-divider-default-right-width 4)
+(setq window-divider-default-bottom-width 4)
 (window-divider-mode 1)
 
 ;; 分割線の色は doom-themes ロード後に強制適用
