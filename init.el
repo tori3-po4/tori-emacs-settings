@@ -24,7 +24,7 @@
 
 
 ;;日本語系の設定
-(set-language-environment "Japanese")
+(set-language-environment "Japanese００")
 (prefer-coding-system 'utf-8)
 
 ;;utf-8の設定
@@ -185,8 +185,6 @@ GUI 以外、または何も見つからなければ nil。"
   (doom-modeline-bar-width 6)
   (doom-modeline-height 32)
   :custom-face
-  (mode-line          ((t (:box (:line-width 6 :color "#b4f9f8")))))
-  (mode-line-inactive ((t (:box (:line-width 6 :color "#2ac3de")))))
   (doom-modeline-evil-normal-state   ((t (:foreground "#9ece6a" :weight bold))))
   (doom-modeline-evil-insert-state   ((t (:foreground "#7dcfff" :weight bold))))
   (doom-modeline-evil-visual-state   ((t (:foreground "#bb9af7" :weight bold))))
@@ -196,6 +194,12 @@ GUI 以外、または何も見つからなければ nil。"
   (doom-modeline-evil-emacs-state    ((t (:foreground "#ff007c" :weight bold))))
   :hook
   (after-init . doom-modeline-mode))
+
+(with-eval-after-load 'doom-modeline
+  (set-face-attribute 'mode-line nil
+                      :box '(:line-width 6 :color "#2ac3de"))
+  (set-face-attribute 'mode-line-inactive nil
+                      :box '(:line-width 6 :color "#1f5160")))
 
 ;; モードラインのセグメント間スペースを広げる
 (with-eval-after-load 'doom-modeline
@@ -300,10 +304,11 @@ GUI 以外、または何も見つからなければ nil。"
 (setq window-divider-default-bottom-width 2)
 (window-divider-mode 1)
 
-(custom-set-faces
- '(window-divider             ((t (:foreground "#bb9af7"))))
- '(window-divider-first-pixel ((t (:foreground "#bb9af7"))))
- '(window-divider-last-pixel  ((t (:foreground "#bb9af7")))))
+;; 分割線の色は doom-themes ロード後に強制適用
+(with-eval-after-load 'doom-themes
+  (set-face-attribute 'window-divider             nil :foreground "#bb9af7")
+  (set-face-attribute 'window-divider-first-pixel nil :foreground "#bb9af7")
+  (set-face-attribute 'window-divider-last-pixel  nil :foreground "#bb9af7"))
 
 ;; ----------------------------
 ;; 補完・ヘルプ系
