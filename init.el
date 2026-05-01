@@ -279,18 +279,7 @@ GUI 以外、または何も見つからなければ nil。"
   :hook
   (after-init . dashboard-setup-startup-hook))
 
-;; 余白でモダンな見た目に
-(use-package spacious-padding
-  :hook
-  (after-init . spacious-padding-mode)
-  :custom
-  (spacious-padding-widths
-   '(  :internal-border-width 15
-     :header-line-width 4
-    :mode-line-width 6
-     :tab-width 4
-   :scroll-bar-width 8
-   :fringe-width 8)))
+
 
 ;; ウィンドウ分割線を明示
 (setq window-divider-default-places t)
