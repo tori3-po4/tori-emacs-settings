@@ -24,7 +24,7 @@
 
 
 ;;日本語系の設定
-(set-language-environment "Japanese００")
+(set-language-environment "Japanese")
 (prefer-coding-system 'utf-8)
 
 ;;utf-8の設定
