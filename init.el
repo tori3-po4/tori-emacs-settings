@@ -185,8 +185,8 @@ GUI 以外、または何も見つからなければ nil。"
   (doom-modeline-bar-width 6)
   (doom-modeline-height 32)
   :custom-face
- (mode-line          ((t (:box (:line-width 6 :color "#2ac3de")))))
-  (mode-line-inactive ((t (:box (:line-width 6 :color "#1f5160")))))
+  (mode-line          ((t (:box (:line-width 2 :color "#2ac3de")))))
+  (mode-line-inactive ((t (:box (:line-width 2 :color "#1f5160")))))
   (doom-modeline-evil-normal-state   ((t (:foreground "#9ece6a" :weight bold))))
   (doom-modeline-evil-insert-state   ((t (:foreground "#7dcfff" :weight bold))))
   (doom-modeline-evil-visual-state   ((t (:foreground "#bb9af7" :weight bold))))
