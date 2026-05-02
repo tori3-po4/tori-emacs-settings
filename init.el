@@ -285,8 +285,8 @@ GUI 以外、または何も見つからなければ nil。"
 
 ;; ウィンドウ分割線を明示
 (setq window-divider-default-places t)
-(setq window-divider-default-right-width 4)
-(setq window-divider-default-bottom-width 4)
+(setq window-divider-default-right-width 2)
+(setq window-divider-default-bottom-width 2)
 (window-divider-mode 1)
 
 ;; 分割線の色は doom-themes ロード後に強制適用
