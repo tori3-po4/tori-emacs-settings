@@ -15,7 +15,9 @@
 ;;ディスプレイサイズの変更
 (when (display-graphic-p)
   (add-to-list 'default-frame-alist '(width . 110))
-  (add-to-list 'default-frame-alist '(height . 42)))
+  (add-to-list 'default-frame-alist '(height . 42))
+  (add-to-list 'default-frame-alist '(top . 0))      ; 画面上端から50px
+  (add-to-list 'default-frame-alist '(left . 0)))   ; 画面左端から100px)
 
 ;;ツールバースクロールバーの設定
 (when (display-graphic-p)
