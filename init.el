@@ -254,7 +254,19 @@ GUI 以外、または何も見つからなければ nil。"
   (git-gutter:added    ((t (:background "#9ece6a"))))
   (git-gutter:deleted  ((t (:background "#f7768e"))))
   :hook
-  (after-init . global-git-gutter-mode))
+ (after-init . global-git-gutter-mode))
+
+;; ----------------------------
+;; Git クライアント (Magit)
+;;   起動: C-x g (magit-status)
+;; ----------------------------
+(use-package magit
+  :commands (magit-status magit-dispatch magit-file-dispatch)
+  :bind (("C-x g"   . magit-status)
+         ("C-x M-g" . magit-dispatch)
+         ("C-c M-g" . magit-file-dispatch))
+  :custom
+  (magit-diff-refine-hunk t))
 
 ;; 対応する括弧のハイライト (組み込み)
 (use-package paren
