@@ -217,14 +217,14 @@ GUI 以外、または何も見つからなければ nil。"
   (prog-mode . rainbow-delimiters-mode))
 
 ;; インデントガイド
-(use-package highlight-indent-guides
-  :diminish
-  :hook
-  ((prog-mode yaml-mode) . highlight-indent-guides-mode)
-  :custom
-  (highlight-indent-guides-auto-enabled t)
-  (highlight-indent-guides-responsive   t)
-  (highlight-indent-guides-method 'character))
+;;(use-package highlight-indent-guides
+;;  :diminish
+;;  :hook
+;;  ((prog-mode yaml-mode) . highlight-indent-guides-mode)
+;;  :custom
+;;  (highlight-indent-guides-auto-enabled t)
+;;  (highlight-indent-guides-responsive   t)
+;;  (highlight-indent-guides-method 'character))
 
 ;; ペースト等の操作可視化
 (use-package volatile-highlights
