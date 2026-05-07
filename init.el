@@ -317,7 +317,10 @@ GUI 以外、または何も見つからなければ nil。"
     ;; TTY: 縦分割の罫線色だけ変えられる
     (set-face-attribute 'vertical-border nil :foreground "#bb9af7")))
 
-;; --- モードラインの"枠":GUI は :box / TTY は :overline + :underline ---
+;; --- モードラインの"枠":GUI は :box / TTY は色帯(:background) ---
+;; Emacs の TTY 描画は :overline / :box を非対応 (xfaces.c の
+;; tty_supports_face_attributes_p で明示的に false 扱い) のため、
+;; TTY ではモードライン全体を反転色の帯にして視覚的に区切る。
 (defun my/apply-modeline-border (&optional frame)
   (with-selected-frame (or frame (selected-frame))
     (if (display-graphic-p frame)
@@ -328,11 +331,13 @@ GUI 以外、または何も見つからなければ nil。"
           (set-face-attribute 'mode-line-inactive frame
                               :box '(:line-width 2 :color "#1f5160")
                               :overline 'unspecified :underline 'unspecified))
-      ;; TTY フォールバック
+      ;; TTY: overline 非対応端末でも違和感のない色帯方式
       (set-face-attribute 'mode-line          frame
-                          :box nil :overline "#2ac3de" :underline "#2ac3de")
+                          :box nil :overline 'unspecified :underline 'unspecified
+                          :background "#2ac3de" :foreground "#1a1b26")
       (set-face-attribute 'mode-line-inactive frame
-                          :box nil :overline "#1f5160" :underline "#1f5160"))))
+                          :box nil :overline 'unspecified :underline 'unspecified
+                          :background "#1f5160" :foreground "#a9b1d6"))))
 
 (add-hook 'after-init-hook            #'my/apply-modeline-border)
 (add-hook 'after-make-frame-functions #'my/apply-modeline-border)  ;; daemon 対応
