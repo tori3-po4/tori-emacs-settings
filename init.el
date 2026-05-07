@@ -189,8 +189,6 @@ GUI 以外、または何も見つからなければ nil。"
   (doom-modeline-bar-width 6)
   (doom-modeline-height 14)
   :custom-face
-  (mode-line          ((t (:box (:line-width 2 :color "#2ac3de")))))
-  (mode-line-inactive ((t (:box (:line-width 2 :color "#1f5160")))))
   (doom-modeline-evil-normal-state   ((t (:foreground "#9ece6a" :weight bold))))
   (doom-modeline-evil-insert-state   ((t (:foreground "#7dcfff" :weight bold))))
   (doom-modeline-evil-visual-state   ((t (:foreground "#bb9af7" :weight bold))))
@@ -299,17 +297,41 @@ GUI 以外、または何も見つからなければ nil。"
 
 
 
-;; ウィンドウ分割線を明示
-(setq window-divider-default-places t)
-(setq window-divider-default-right-width 2)
-(setq window-divider-default-bottom-width 2)
-(window-divider-mode 1)
+;; --- ウィンドウ分割線:GUI/TTY 両対応 ---
+(setq window-divider-default-places t
+      window-divider-default-right-width 2
+      window-divider-default-bottom-width 2)
+(when (display-graphic-p)
+  (window-divider-mode 1))   ;; TTY では呼んでも無意味なので GUI 限定にしておく
 
-;; 分割線の色は doom-themes ロード後に強制適用
 (with-eval-after-load 'doom-themes
-  (set-face-attribute 'window-divider             nil :foreground "#bb9af7")
-  (set-face-attribute 'window-divider-first-pixel nil :foreground "#bb9af7")
-  (set-face-attribute 'window-divider-last-pixel  nil :foreground "#bb9af7"))
+  (if (display-graphic-p)
+      (progn
+        (set-face-attribute 'window-divider             nil :foreground "#bb9af7")
+        (set-face-attribute 'window-divider-first-pixel nil :foreground "#bb9af7")
+        (set-face-attribute 'window-divider-last-pixel  nil :foreground "#bb9af7"))
+    ;; TTY: 縦分割の罫線色だけ変えられる
+    (set-face-attribute 'vertical-border nil :foreground "#bb9af7")))
+
+;; --- モードラインの"枠":GUI は :box / TTY は :overline + :underline ---
+(defun my/apply-modeline-border (&optional frame)
+  (with-selected-frame (or frame (selected-frame))
+    (if (display-graphic-p frame)
+        (progn
+          (set-face-attribute 'mode-line          frame
+                              :box '(:line-width 2 :color "#2ac3de")
+                              :overline 'unspecified :underline 'unspecified)
+          (set-face-attribute 'mode-line-inactive frame
+                              :box '(:line-width 2 :color "#1f5160")
+                              :overline 'unspecified :underline 'unspecified))
+      ;; TTY フォールバック
+      (set-face-attribute 'mode-line          frame
+                          :box nil :overline "#2ac3de" :underline "#2ac3de")
+      (set-face-attribute 'mode-line-inactive frame
+                          :box nil :overline "#1f5160" :underline "#1f5160"))))
+
+(add-hook 'after-init-hook            #'my/apply-modeline-border)
+(add-hook 'after-make-frame-functions #'my/apply-modeline-border)  ;; daemon 対応
 
 ;; ----------------------------
 ;; 補完・ヘルプ系
