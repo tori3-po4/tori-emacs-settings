@@ -107,9 +107,9 @@ GUI 以外、または何も見つからなければ nil。"
 (require 'package)
 
 (setq package-archives
-     '(("gnu"    . "https://elpa.gnu.org/packages/")
-	 ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-    ("melpa"  . "https://melpa.org/packages/")))
+      '(("gnu"    . "https://elpa.gnu.org/packages/")
+  	 ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+         ("melpa"  . "https://melpa.org/packages/")))
 
 (setq package-enable-at-startup nil)
 (package-initialize)
@@ -187,7 +187,7 @@ GUI 以外、または何も見つからなければ nil。"
   (doom-modeline-minor-modes nil)
   (doom-modeline-buffer-encoding nil)
   (doom-modeline-bar-width 6)
-  (doom-modeline-height 32)
+  (doom-modeline-height 20)
   :custom-face
   (mode-line          ((t (:box (:line-width 2 :color "#2ac3de")))))
   (mode-line-inactive ((t (:box (:line-width 2 :color "#1f5160")))))
