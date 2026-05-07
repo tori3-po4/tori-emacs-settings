@@ -8,6 +8,8 @@
 (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 ;; ミニバッファの高さを制限(画面の25%まで)
 (setq max-mini-window-height 0.25)
+;;Shift + 矢印でバッファ移動をできるようにした
+(windmove-default-keybindings)
 
 ;; もしくは伸縮自体を止める(長文は切れるので注意)
 ;; (setq resize-mini-windows nil)
