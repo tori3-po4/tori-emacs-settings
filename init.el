@@ -331,13 +331,13 @@ GUI 以外、または何も見つからなければ nil。"
           (set-face-attribute 'mode-line-inactive frame
                               :box '(:line-width 2 :color "#1f5160")
                               :overline 'unspecified :underline 'unspecified))
-      ;; TTY: overline 非対応端末でも違和感のない色帯方式
+      ;; TTY: overline 非対応端末でも違和感のない色帯方式 (落ち着いた配色)
       (set-face-attribute 'mode-line          frame
                           :box nil :overline 'unspecified :underline 'unspecified
-                          :background "#2ac3de" :foreground "#1a1b26")
+                          :background "#3b4261" :foreground "#c0caf5")
       (set-face-attribute 'mode-line-inactive frame
                           :box nil :overline 'unspecified :underline 'unspecified
-                          :background "#1f5160" :foreground "#a9b1d6"))))
+                          :background "#1f2335" :foreground "#565f89"))))
 
 (add-hook 'after-init-hook            #'my/apply-modeline-border)
 (add-hook 'after-make-frame-functions #'my/apply-modeline-border)  ;; daemon 対応
