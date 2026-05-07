@@ -11,6 +11,10 @@
 ;;Shift + 矢印でバッファ移動をできるようにした
 (windmove-default-keybindings)
 
+;; ターミナルでマウスを有効化(GUI には影響なし)
+(unless (display-graphic-p)
+  (xterm-mouse-mode 1))
+
 ;; もしくは伸縮自体を止める(長文は切れるので注意)
 ;; (setq resize-mini-windows nil)
 
