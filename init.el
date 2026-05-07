@@ -558,7 +558,10 @@ nil の場合は AUCTeX 等の関連パッケージを一切ロードしない�
       ;; global-display-line-numbers-mode が pdf-view バッファでも
       ;; 行番号を出そうとして pdf-tools が非互換警告を発するため、
       ;; pdf-view-mode に入った時点で局所的に off にする。
-      (pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
+      ((pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
+       ;; 隣接ページを裏で先読みしてスクロール時のカクつき
+       ;; (ページ境界をまたぐ瞬間の描画待ち) を抑える。
+       (pdf-view-mode . pdf-cache-prefetch-mode))
       :config
       (pdf-tools-install :no-query))))
 
