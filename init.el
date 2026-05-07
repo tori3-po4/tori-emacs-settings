@@ -88,7 +88,7 @@ GUI 以外、または何も見つからなければ nil。"
 (when (and (display-graphic-p) my/main-font)
   (set-face-attribute 'default nil
                       :family my/main-font
-                      :height 200)
+                      :height 150)
   (set-fontset-font t 'unicode
                     (font-spec :family my/main-font)
                     nil 'append)
