@@ -440,10 +440,10 @@ GUI 以外、または何も見つからなければ nil。"
 (when (and (display-graphic-p) my/main-font)
   (set-face-attribute 'mode-line nil
                       :family my/main-font
-                      :height 200)
+                      :height 150)
   (set-face-attribute 'mode-line-inactive nil
                       :family my/main-font
-                      :height 200))
+                      :height 150))
 
 (when my/icons-available-p
   ;; Nerd Font アイコン領域 (PUA) を専用フォントで描画 ('prepend で最優先)
