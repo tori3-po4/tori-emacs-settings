@@ -65,7 +65,7 @@ GUI 以外、または何も見つからなければ nil。"
      "JetBrains Mono"
      "Menlo"            ; macOS 標準
      "Consolas"         ; Windows 標準
-     "DejaVu Sans Mono" ; 多くの Linux に同梱
+:    "DejaVu Sans Mono" ; 多くの Linux に同梱
      "monospace"))
   "実際に使う本文フォント。インストール済みの先頭候補。")
 
@@ -187,7 +187,7 @@ GUI 以外、または何も見つからなければ nil。"
   (doom-modeline-minor-modes nil)
   (doom-modeline-buffer-encoding nil)
   (doom-modeline-bar-width 6)
-  (doom-modeline-height 16)
+  (doom-modeline-height 14)
   :custom-face
   (mode-line          ((t (:box (:line-width 2 :color "#2ac3de")))))
   (mode-line-inactive ((t (:box (:line-width 2 :color "#1f5160")))))
