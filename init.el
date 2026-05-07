@@ -1,4 +1,4 @@
-;;; init.el --- Portable Emacs config -*- lexical-binding: t; -*-
+;; init.el --- Portable Emacs config -*- lexical-binding: t; -*-
 
 ;;UI系の設定
 (global-display-line-numbers-mode 1)
