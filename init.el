@@ -554,6 +554,11 @@ nil の場合は AUCTeX 等の関連パッケージを一切ロードしない�
              (memq system-type '(darwin gnu gnu/linux)))
     (use-package pdf-tools
       :magic ("%PDF" . pdf-view-mode)
+      :hook
+      ;; global-display-line-numbers-mode が pdf-view バッファでも
+      ;; 行番号を出そうとして pdf-tools が非互換警告を発するため、
+      ;; pdf-view-mode に入った時点で局所的に off にする。
+      (pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
       :config
       (pdf-tools-install :no-query))))
 
