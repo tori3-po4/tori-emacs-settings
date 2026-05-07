@@ -321,20 +321,6 @@ GUI 以外、または何も見つからなければ nil。"
   :config
   (which-key-mode 1))
 
-;; which-key をフロート表示 (GUI 必須)
-(use-package which-key-posframe
-  :if (display-graphic-p)
-  :after which-key
-  :custom
-  (which-key-posframe-poshandler 'posframe-poshandler-frame-bottom-center)
-  (which-key-posframe-border-width 1)
-  (which-key-posframe-parameters
-   '((left-fringe . 8)
-     (right-fringe . 8)))
-  :custom-face
-  (which-key-posframe-border ((t (:background "#bb9af7"))))
-  :config
-  (which-key-posframe-mode 1))
 
 (use-package vertico
   :init
@@ -353,12 +339,6 @@ GUI 以外、または何も見つからなければ nil。"
 
 (use-package consult)
 
-;; vertico をフロート表示 (GUI 必須)
-(use-package vertico-posframe
-  :if (display-graphic-p)
-  :after vertico
-  :config
-  (vertico-posframe-mode 1))
 
 
 ;; ----------------------------
