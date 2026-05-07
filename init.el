@@ -501,6 +501,45 @@ nil の場合は AUCTeX 等の関連パッケージを一切ロードしない�
   (use-package cdlatex
     :hook (LaTeX-mode . turn-on-cdlatex))
 
+  ;; --- 保存時の自動コンパイル (vimtex の continuous=1 相当) ---
+  ;; .tex 保存をフックして LatexMk を非同期実行する。
+  ;; TeX-after-compilation-finished-functions に既に
+  ;; TeX-revert-document-buffer を仕込んであるので、
+  ;;   保存 → 自動コンパイル → PDF 自動更新
+  ;; までがシームレスに繋がる (vimtex の continuous mode と同等の体験)。
+  ;; 切替: M-x my/latex-auto-compile-toggle
+  (defcustom my/latex-auto-compile-on-save t
+    "Non-nil なら LaTeX バッファ保存時に自動で LatexMk を実行する。"
+    :type 'boolean
+    :group 'my)
+
+  (defun my/latex-compile-on-save ()
+    "保存時に LatexMk を非対話的に実行する。
+コンパイルは TeX-run-TeX 経由で非同期に走り、*output* バッファの
+自動 popup は抑制する (毎回保存の度に窓が開くのを防ぐため)。
+エラー時は AUCTeX のモードライン表示等で気づける。"
+    (when (and my/latex-auto-compile-on-save
+               (derived-mode-p 'LaTeX-mode)
+               (buffer-file-name))
+      (let ((TeX-save-query nil)
+            (TeX-show-compilation nil))
+        ;; 第3引数 -1: override-confirm 抑止 (LatexMk 自体は通常プロンプトしない)
+        (TeX-command "LatexMk" #'TeX-master-file -1))))
+
+  (defun my/latex-auto-compile-toggle ()
+    "Toggle `my/latex-auto-compile-on-save'."
+    (interactive)
+    (setq my/latex-auto-compile-on-save (not my/latex-auto-compile-on-save))
+    (message "LaTeX auto-compile on save: %s"
+             (if my/latex-auto-compile-on-save "enabled" "disabled")))
+
+  ;; LaTeX-mode バッファのみ buffer-local に save hook を設置
+  ;; (グローバル after-save-hook を汚染しない)
+  (add-hook 'LaTeX-mode-hook
+            (lambda ()
+              (add-hook 'after-save-hook
+                        #'my/latex-compile-on-save nil t)))
+
   ;; Emacs 内で完結する PDF ビューア。
   ;; ・GUI かつ macOS / Linux のみ有効化 (Windows は epdfinfo ビルドが煩雑、
   ;;   TTY では描画不可)。
