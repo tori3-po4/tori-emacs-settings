@@ -424,6 +424,39 @@ GUI 以外、または何も見つからなければ nil。"
   (vterm-shell (or (getenv "SHELL") "/bin/zsh")))
 
 ;; ============================================================
+;; プロジェクト毎の環境変数 (buffer-env)
+;;   ・ファイル訪問時に上位ディレクトリの .env / .envrc を読み込み、
+;;     得られた env を *バッファローカル* な
+;;     `exec-path' / `process-environment' に反映する。
+;;     venv の bin / PYTHONPATH / API キー等を書ける。
+;;
+;;   ・buffer-env を選んだ理由:
+;;     - GNU ELPA 同梱 (追加リポジトリ不要)
+;;     - direnv.el と違い *バッファローカル* で切替えるため、
+;;       プロジェクトを跨ぐバッファ間で env を取り違えない
+;;     - direnv バイナリがあれば .envrc を direnv 経由で評価し、
+;;       無くても .env (KEY=VAL 形式) は bash 経由で読める
+;;
+;;   ・eglot との連携:
+;;     eglot は起動時バッファの `exec-path' / `process-environment'
+;;     を LSP サーバへそのまま渡す。.env または .envrc に
+;;       export PATH="$PWD/.venv/bin:$PATH"
+;;       export VIRTUAL_ENV="$PWD/.venv"
+;;     と書けば `M-x eglot' 直叩きでも venv 内の
+;;     pyright / pylsp / ruff-lsp 等が解決される。
+;;
+;;   ・hook の意図:
+;;     - hack-local-variables-hook: ファイル訪問時 (LSP 起動前) に env 適用
+;;     - comint-mode-hook:          M-x shell / eshell でも env を継承
+;;     vterm/eat は呼出元バッファの env を継承するため追加 hook 不要。
+;;
+;;   ・初回訪問時は安全のためスクリプト承認プロンプトが出る。
+;; ============================================================
+(use-package buffer-env
+  :hook ((hack-local-variables . buffer-env-update)
+         (comint-mode           . buffer-env-update)))
+
+;; ============================================================
 ;; LaTeX 編集環境 (vimtex 相当)
 ;;   ・latexmk + 何らかの TeX エンジンが揃った環境のみ有効化
 ;;   ・コア: AUCTeX (LaTeX-mode・コンパイル・SyncTeX・fold)
@@ -585,6 +618,39 @@ nil の場合は AUCTeX 等の関連パッケージを一切ロードしない�
             (lambda ()
               (add-hook 'after-save-hook
                         #'my/latex-compile-on-save nil t))))
+
+;; ============================================================
+;; Jupyter Notebook (EIN: Emacs IPython Notebook)
+;;   ・.ipynb を Emacs 内でネイティブに開いて編集
+;;     (セル単位の実行 / インライン出力 / 画像表示までサポート)
+;;
+;;   ・主要コマンド:
+;;       M-x ein:run               新しい Jupyter サーバを起動して接続
+;;       M-x ein:login             既存の Jupyter サーバ (URL 指定) へ接続
+;;       M-x ein:notebooklist-open Jupyter ノートブック一覧を開く
+;;
+;;   ・主要キー (notebook バッファ内):
+;;       C-c C-c   現在のセルを実行
+;;       C-c C-z   カーネルを再起動
+;;       M-p / M-n セル間移動
+;;
+;;   ・前提と env の引き継ぎ:
+;;     - 外部に jupyter コマンドが必要 (`pip install jupyter` 等)。
+;;     - プロジェクト固有の Python/venv を使う場合は .env / .envrc に
+;;         export PATH="$PWD/.venv/bin:$PATH"
+;;       と書いておけば、上の buffer-env 経由で ein:run も
+;;       venv 内の jupyter を自動で起動する。
+;;     - jupyter が見つからない環境では ein を読み込まない。
+;;
+;;   ・補完:
+;;     EIN は標準で completion-at-point を提供するため、
+;;     既存の corfu がそのままノートブックバッファでも効く。
+;; ============================================================
+(when (executable-find "jupyter")
+  (use-package ein
+    :commands (ein:run ein:login ein:notebooklist-open)
+    :custom
+    (ein:output-area-inlined-images t)))
 
 ;; custom.el を分離
 (setq custom-file (locate-user-emacs-file "custom.el"))
