@@ -413,7 +413,6 @@ GUI 以外、または何も見つからなければ nil。"
 ;;   ・コア: AUCTeX (LaTeX-mode・コンパイル・SyncTeX・fold)
 ;;           RefTeX (相互参照 / 引用ナビ — AUCTeX 同梱)
 ;;           CDLaTeX (数式の高速入力 — vimtex の math snippets 相当)
-;;           pdf-tools (Emacs 内で完結する PDF ビューア)
 ;;
 ;;   ・コンパイル: latexmk -synctex=1 のみを呼び出す。
 ;;                 -pdf / -pdflua / -pdfdvi のようなエンジン選択フラグは
@@ -422,14 +421,9 @@ GUI 以外、または何も見つからなければ nil。"
 ;;                 → auctex-latexmk は採用しない (こちらは TeX-PDF-mode から
 ;;                    -pdf 系フラグを生成するため latexmkrc と衝突しうる)。
 ;;
-;;   ・PDF ビューア: GUI かつ macOS / Linux なら pdf-tools (Emacs 内表示) を
-;;     最優先。初回 PDF オープン時に epdfinfo がビルドされる
-;;     (依存: macOS=`brew install poppler automake`,
-;;            Linux=`libpoppler-glib-dev` + 標準ビルドツール群)。
-;;     TTY や非対応プラットフォームでは Skim / zathura / okular にフォールバック。
+;;   ・PDF ビューア: 既定は外部ビューア (macOS=Skim, Linux=zathura/okular)。
+;;     M-x my/latex-set-viewer で実行時に切替可能。
 ;;     forward search: AUCTeX の `C-c C-v'。
-;;     inverse search: pdf-view-mode の `C-c C-g' (pdf-sync-minor-mode が
-;;                     pdf-tools-install で自動有効化される)。
 ;; ============================================================
 (defvar my/latex-available-p
   (and (executable-find "latexmk")
@@ -480,22 +474,51 @@ nil の場合は AUCTeX 等の関連パッケージを一切ロードしない�
     (setq-default TeX-command-default "LatexMk")
     (setq TeX-view-program-selection
           (cond
-           ;; GUI かつ macOS/Linux: Emacs 内表示 (pdf-tools) を最優先
-           ((and (display-graphic-p)
-                 (memq system-type '(darwin gnu gnu/linux)))
-            '((output-pdf "PDF Tools") (output-html "xdg-open")))
-           ;; TTY 等のフォールバック (環境に応じて外部ビューア)
            ((eq system-type 'darwin)
             '((output-pdf "Skim") (output-html "open")))
            ((executable-find "zathura")
             '((output-pdf "Zathura") (output-html "xdg-open")))
            ((executable-find "okular")
             '((output-pdf "Okular") (output-html "xdg-open")))
+           ((executable-find "evince")
+            '((output-pdf "Evince") (output-html "xdg-open")))
            (t
-            '((output-pdf "PDF Tools") (output-html "xdg-open")))))
+            '((output-pdf "xdg-open") (output-html "xdg-open")))))
     ;; コンパイル完了時に開いている PDF バッファを自動再読込
     (add-hook 'TeX-after-compilation-finished-functions
               #'TeX-revert-document-buffer))
+
+  ;; --- PDF ビューア切替コマンド ---
+  ;; M-x my/latex-set-viewer で TeX-view-program-selection を実行時に変更。
+  ;; 利用可能なビューアのみ補完候補に出す。反映は次回 View (C-c C-v) から。
+  (defvar my/latex-viewer-candidates
+    '(("Skim"      . (lambda () (eq system-type 'darwin)))
+      ("Zathura"   . (lambda () (executable-find "zathura")))
+      ("Okular"    . (lambda () (executable-find "okular")))
+      ("Evince"    . (lambda () (executable-find "evince")))
+      ("xdg-open"  . (lambda () (executable-find "xdg-open")))
+      ("open"      . (lambda () (eq system-type 'darwin))))
+    "PDF ビューア名と利用可否判定 (lambda) の連想リスト。")
+
+  (defun my/latex--available-viewers ()
+    "現在の環境で利用可能なビューア名のリスト。"
+    (delq nil
+          (mapcar (lambda (cell)
+                    (and (funcall (cdr cell)) (car cell)))
+                  my/latex-viewer-candidates)))
+
+  (defun my/latex-set-viewer (name)
+    "AUCTeX の PDF ビューアを NAME に切替える。
+`TeX-view-program-selection' の output-pdf エントリのみを上書きする。
+既に開いている PDF バッファは保持され、次回 View (C-c C-v) から反映。"
+    (interactive
+     (list (completing-read
+            "PDF viewer: " (my/latex--available-viewers) nil t)))
+    (setq TeX-view-program-selection
+          (cons (list 'output-pdf name)
+                (assq-delete-all 'output-pdf
+                                 (copy-tree TeX-view-program-selection))))
+    (message "TeX-view-program-selection: output-pdf -> %s" name))
 
   ;; 数式の高速入力 (vimtex の math snippets / surround 相当)
   (use-package cdlatex
@@ -538,32 +561,7 @@ nil の場合は AUCTeX 等の関連パッケージを一切ロードしない�
   (add-hook 'LaTeX-mode-hook
             (lambda ()
               (add-hook 'after-save-hook
-                        #'my/latex-compile-on-save nil t)))
-
-  ;; Emacs 内で完結する PDF ビューア。
-  ;; ・GUI かつ macOS / Linux のみ有効化 (Windows は epdfinfo ビルドが煩雑、
-  ;;   TTY では描画不可)。
-  ;; ・:magic で PDF ファイルを開いたとき自動的に pdf-view-mode に切替。
-  ;; ・初回 PDF オープン時に epdfinfo (Poppler ベース) がビルドされる。
-  ;;   - macOS: `brew install poppler automake`
-  ;;   - Linux: `libpoppler-glib-dev`, `make`, `pkg-config` 等
-  ;;   ビルド失敗時は AUCTeX の view が機能しないだけで他には影響なし。
-  ;; ・pdf-tools-install が pdf-sync-minor-mode を自動有効化するため、
-  ;;   PDF バッファ内で `C-c C-g' により inverse search (PDF→source) が可能。
-  (when (and (display-graphic-p)
-             (memq system-type '(darwin gnu gnu/linux)))
-    (use-package pdf-tools
-      :magic ("%PDF" . pdf-view-mode)
-      :hook
-      ;; global-display-line-numbers-mode が pdf-view バッファでも
-      ;; 行番号を出そうとして pdf-tools が非互換警告を発するため、
-      ;; pdf-view-mode に入った時点で局所的に off にする。
-      ((pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
-       ;; 隣接ページを裏で先読みしてスクロール時のカクつき
-       ;; (ページ境界をまたぐ瞬間の描画待ち) を抑える。
-       (pdf-view-mode . pdf-cache-prefetch-mode))
-      :config
-      (pdf-tools-install :no-query))))
+                        #'my/latex-compile-on-save nil t))))
 
 ;; custom.el を分離
 (setq custom-file (locate-user-emacs-file "custom.el"))
