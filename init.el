@@ -471,7 +471,14 @@ nil の場合は AUCTeX 等の関連パッケージを一切ロードしない�
                    "latexmk -verbose -file-line-error -synctex=1 -interaction=nonstopmode %t"
                    TeX-run-TeX nil (latex-mode)
                    :help "Run latexmk (engine 選択は ~/.latexmkrc に委ねる)"))
+    ;; LaTeX-mode は内部で TeX-command-default をバッファローカルに "LaTeX"
+    ;; (= 組み込みの pdflatex 直接呼び出し) で書き戻すため、setq-default
+    ;; だけでは効かない。LaTeX-mode-hook で毎バッファ "LatexMk" に上書きする。
+    ;; これを怠ると C-c C-c のデフォルトが pdflatex になり、~/.latexmkrc の
+    ;; $pdf_mode が完全に無視される。
     (setq-default TeX-command-default "LatexMk")
+    (add-hook 'LaTeX-mode-hook
+              (lambda () (setq TeX-command-default "LatexMk")))
     (setq TeX-view-program-selection
           (cond
            ((eq system-type 'darwin)
