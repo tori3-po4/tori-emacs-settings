@@ -246,19 +246,16 @@ GUI 以外、または何も見つからなければ nil。"
   :hook
   (after-init . beacon-mode))
 
-;; Git の変更行を左フリンジに表示
-(use-package git-gutter
-  :diminish
-  :custom
-  (git-gutter:modified-sign "~")
-  (git-gutter:added-sign    "+")
-  (git-gutter:deleted-sign  "-")
-  :custom-face
-  (git-gutter:modified ((t (:background "#e0af68"))))
-  (git-gutter:added    ((t (:background "#9ece6a"))))
-  (git-gutter:deleted  ((t (:background "#f7768e"))))
-  :hook
- (after-init . global-git-gutter-mode))
+;; Git の変更行をフリンジに表示。
+;; 旧構成の git-gutter は git diff を同期実行するため、保存・バッファ切替で
+;; 短時間ハングすることがあった。差分計算が非同期な diff-hl に置き換えている。
+(use-package diff-hl
+  :hook ((after-init        . global-diff-hl-mode)
+         (magit-pre-refresh  . diff-hl-magit-pre-refresh)
+         (magit-post-refresh . diff-hl-magit-post-refresh))
+  :config
+  ;; TTY ではフリンジが無いのでマージン側へ表示
+  (unless (display-graphic-p) (diff-hl-margin-mode 1)))
 
 ;; ----------------------------
 ;; Git クライアント (Magit)
@@ -382,8 +379,8 @@ GUI 以外、または何も見つからなければ nil。"
   (global-corfu-mode)
   :custom
   (corfu-auto t)
-  (corfu-auto-delay 0.1)
-  (corfu-auto-prefix 2)
+  (corfu-auto-delay 0.2)
+  (corfu-auto-prefix 3)
   (corfu-cycle t)
   (corfu-quit-no-match 'separator)
   (tab-always-indent 'complete))
