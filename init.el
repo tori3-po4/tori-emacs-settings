@@ -635,22 +635,24 @@ nil の場合は AUCTeX 等の関連パッケージを一切ロードしない�
 ;;       M-p / M-n セル間移動
 ;;
 ;;   ・前提と env の引き継ぎ:
-;;     - 外部に jupyter コマンドが必要 (`pip install jupyter` 等)。
+;;     - 外部に jupyter コマンドが必要 (`pip install jupyter` / `uv add jupyter` 等)。
 ;;     - プロジェクト固有の Python/venv を使う場合は .env / .envrc に
 ;;         export PATH="$PWD/.venv/bin:$PATH"
 ;;       と書いておけば、上の buffer-env 経由で ein:run も
 ;;       venv 内の jupyter を自動で起動する。
-;;     - jupyter が見つからない環境では ein を読み込まない。
+;;     - 解決のタイミング: ein:run を呼ぶバッファの buffer-local な
+;;       `exec-path' / `process-environment' を継承するため、
+;;       *先にプロジェクト内ファイルを開いてから* M-x ein:run を呼ぶこと。
+;;       (Emacs 起動時の global PATH に jupyter が無くても可)
 ;;
 ;;   ・補完:
 ;;     EIN は標準で completion-at-point を提供するため、
 ;;     既存の corfu がそのままノートブックバッファでも効く。
 ;; ============================================================
-(when (executable-find "jupyter")
-  (use-package ein
-    :commands (ein:run ein:login ein:notebooklist-open)
-    :custom
-    (ein:output-area-inlined-images t)))
+(use-package ein
+  :commands (ein:run ein:login ein:notebooklist-open)
+  :custom
+  (ein:output-area-inlined-images t))
 
 ;; custom.el を分離
 (setq custom-file (locate-user-emacs-file "custom.el"))
